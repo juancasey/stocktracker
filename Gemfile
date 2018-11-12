@@ -58,3 +58,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Adds Devise for authentication
 gem 'devise'
+gem 'devise_invitable'
