@@ -1,0 +1,2 @@
+class StockValue < ApplicationRecord
+end
