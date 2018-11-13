@@ -10,12 +10,13 @@
   <%= @stock_list.description %>
 </p>
 
-<% if (@stock_list.stock_tickers.count > 0) %>
+<%= form_with(model: [ @stock_list, @stock_list.stock_tickers.build ]) do |form| %>
   <table>
     <thead>
       <tr>
         <th>Symbol</th>
-        <th>Name</th>      
+        <th>Name</th> 
+        <th></th>     
       </tr>
     </thead>
   
@@ -26,6 +27,11 @@
           <td><%= stock_ticker.name %></td>
         </tr>
       <% end %>
+      <tr>
+        <td><%= form.text_field :symbol %></td>
+        <td><%= form.text_field :name %></td>
+        <td><%= form.submit "Add" %><td>
+      </tr>
     </tbody>
   </table>
 <% end %>
