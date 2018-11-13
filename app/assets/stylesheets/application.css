@@ -21,7 +21,7 @@ table {
 
  th {
      text-align: left;
-     padding: 0 5px 0px;
+     padding: 5px 5px 5px 5px;
  }
 
  table, th, td {
@@ -36,6 +36,9 @@ th {
 
 tr:nth-child(even) { background: #f2f5f9; }
 tr:nth-child(odd) { background: #ccdff9; }
+
+tr.error:nth-child(even) { background: #ffd8da; }
+tr.error:nth-child(odd) { background: #e8b0b3; }
 
 /*** Menu Styles ***/
 ul.menu {

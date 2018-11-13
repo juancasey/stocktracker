@@ -8,5 +8,37 @@
   <%= @stock_list.description %>
 </p>
 
+<% @stock_list.stock_tickers.each do |stock_ticker| %>
+  <div><%= stock_ticker.symbol %> | <%= stock_ticker.name %></div>
+  <table>
+    <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Time Stamp (EST)</th>
+        <th>Open</th>
+        <th>High</th>
+        <th>Low</th>
+        <th>Close</th>
+        <th>Volume</th>
+        <th>Captured (UTC)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% stock_ticker.stock_values.order(created_at: :desc).limit(5).each do |stock_value| %>
+        <tr>
+          <td><%= stock_value.symbol %></td>
+          <td><%= stock_value.timestamp.strftime("%F %H:%M") %></td>
+          <td><%= stock_value.open %></td>
+          <td><%= stock_value.high %></td>
+          <td><%= stock_value.low %></td>
+          <td><%= stock_value.close %></td>
+          <td><%= stock_value.volume %></td>
+          <td><%= stock_value.created_at %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
 <%= link_to 'Edit', edit_stock_list_path(@stock_list) %> |
 <%= link_to 'Back', stock_lists_path %>

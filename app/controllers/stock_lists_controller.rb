@@ -12,7 +12,8 @@ class StockListsController < ApplicationController
   end
 
   # GET /stock_lists/1
-  def show
+  def show    
+    
   end
 
   # GET /stock_lists/new
