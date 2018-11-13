@@ -5,9 +5,9 @@ class StockListsController < ApplicationController
   # GET /stock_lists
   def index
     if (current_user.admin?)
-      @stock_lists = StockList.all
+      @stock_lists = StockList.all.order(:user_id, :name)
     else
-      @stock_lists = StockList.where(user: current_user)
+      @stock_lists = StockList.where(user: current_user).order(:name)
     end
   end
 

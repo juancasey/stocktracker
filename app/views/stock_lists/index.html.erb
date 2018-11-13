@@ -20,6 +20,8 @@
           <td><%= link_to 'Show', stock_list %></td>
           <td><%= link_to 'Edit', edit_stock_list_path(stock_list) %></td>
           <td><%= link_to 'Destroy', stock_list, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% else %>
+          <td/><td/><td/>
         <% end %>
       </tr>
     <% end %>

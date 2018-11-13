@@ -11,7 +11,7 @@ class CaptureStockSchedulerJob < ApplicationJob
   def self.schedule
     # Values for interval calculation (use yesterday to ensure the calculation is always positive)
     start_time = (ActiveSupport::TimeZone["UTC"].parse("05:00") - 1.day)
-    run_every = 1.minutes.to_i
+    run_every = 5.minutes.to_i
     current_time = Time.current
 
     # Calculate how long until the next interval
