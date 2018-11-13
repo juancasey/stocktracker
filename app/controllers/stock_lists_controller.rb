@@ -3,7 +3,6 @@ class StockListsController < ApplicationController
   before_action :set_stock_list, only: [:show, :edit, :update, :destroy]  
 
   # GET /stock_lists
-  # GET /stock_lists.json
   def index
     if (current_user.admin?)
       @stock_lists = StockList.all
@@ -13,7 +12,6 @@ class StockListsController < ApplicationController
   end
 
   # GET /stock_lists/1
-  # GET /stock_lists/1.json
   def show
   end
 
@@ -27,7 +25,6 @@ class StockListsController < ApplicationController
   end
 
   # POST /stock_lists
-  # POST /stock_lists.json
   def create
     @stock_list = StockList.new(stock_list_params)
     @stock_list.user_id = current_user.id
@@ -44,7 +41,6 @@ class StockListsController < ApplicationController
   end
 
   # PATCH/PUT /stock_lists/1
-  # PATCH/PUT /stock_lists/1.json
   def update
     respond_to do |format|
       if @stock_list.update(stock_list_params)
@@ -58,7 +54,6 @@ class StockListsController < ApplicationController
   end
 
   # DELETE /stock_lists/1
-  # DELETE /stock_lists/1.json
   def destroy
     @stock_list.destroy
     respond_to do |format|
