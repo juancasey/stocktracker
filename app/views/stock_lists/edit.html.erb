@@ -2,5 +2,35 @@
 
 <%= render 'form', stock_list: @stock_list %>
 
+<%= form_with(model: [ @stock_list, @stock_list.stock_tickers.build ]) do |form| %>
+  <table>
+    <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Name</th>
+        <th></th>     
+      </tr>
+    </thead>
+  
+    <tbody>
+      <% @stock_list.stock_tickers.each do |stock_ticker| %>
+        <% if( !stock_ticker.symbol.nil? ) %>
+            <tr>
+                <td><%= stock_ticker.symbol %></td>
+                <td><%= stock_ticker.name %></td>
+                <td></td>
+            </tr>
+        <% else %>
+            <tr>
+                <td><%= form.text_field :symbol, maxlength: 4 %></td>
+                <td><%= form.text_field :name %></td>
+                <td><%= form.submit "Add" %></td>
+            </tr>
+        <% end %>
+      <% end %>      
+    </tbody>
+  </table>
+<% end %>
+
 <%= link_to 'Show', @stock_list %> |
-<%= link_to 'Back', stock_list_path %>
+<%= link_to 'Back', stock_lists_path %>

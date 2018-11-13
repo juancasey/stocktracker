@@ -31,11 +31,9 @@ class StockListsController < ApplicationController
 
     respond_to do |format|
       if @stock_list.save
-        format.html { redirect_to @stock_list, notice: 'Stock list was successfully created.' }
-        format.json { render :show, status: :created, location: @stock_list }
+        format.html { redirect_to edit_stock_list_path(@stock_list), notice: 'Stock list was successfully created.' }
       else
         format.html { render :new }
-        format.json { render json: @stock_list.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -45,10 +43,8 @@ class StockListsController < ApplicationController
     respond_to do |format|
       if @stock_list.update(stock_list_params)
         format.html { redirect_to @stock_list, notice: 'Stock list was successfully updated.' }
-        format.json { render :show, status: :ok, location: @stock_list }
       else
         format.html { render :edit }
-        format.json { render json: @stock_list.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -58,7 +54,6 @@ class StockListsController < ApplicationController
     @stock_list.destroy
     respond_to do |format|
       format.html { redirect_to stock_lists_url, notice: 'Stock list was successfully destroyed.' }
-      format.json { head :no_content }
     end
   end
 
