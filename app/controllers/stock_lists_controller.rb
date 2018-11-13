@@ -1,10 +1,15 @@
 class StockListsController < ApplicationController
-  before_action :set_stock_list, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
+  before_action :set_stock_list, only: [:show, :edit, :update, :destroy]  
 
   # GET /stock_lists
   # GET /stock_lists.json
   def index
-    @stock_lists = StockList.where(user: current_user)
+    if (current_user.admin?)
+      @stock_lists = StockList.all
+    else
+      @stock_lists = StockList.where(user: current_user)
+    end
   end
 
   # GET /stock_lists/1

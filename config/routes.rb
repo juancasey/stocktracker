@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   devise_for :users
   resources :users, except: :create
+  match '/users',   to: 'users#index',   via: 'get'
 
   authenticate :user do
     resources :stock_lists do
@@ -12,5 +13,5 @@ Rails.application.routes.draw do
   end
   post 'create_user' => 'users#create', as: :create_user   
 
-  root to: 'welcome#index'
+  root to: 'stock_lists#index'
 end

@@ -1,5 +1,3 @@
-<p id="notice"><%= notice %></p>
-
 <h1>Stock Lists</h1>
 
 <table>
@@ -18,9 +16,11 @@
         <td><%= stock_list.name %></td>
         <td><%= stock_list.description %></td>
         <td><%= stock_list.user.email %></td>
-        <td><%= link_to 'Show', stock_list %></td>
-        <td><%= link_to 'Edit', edit_stock_list_path(stock_list) %></td>
-        <td><%= link_to 'Destroy', stock_list, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% if (stock_list.user == current_user) %>
+          <td><%= link_to 'Show', stock_list %></td>
+          <td><%= link_to 'Edit', edit_stock_list_path(stock_list) %></td>
+          <td><%= link_to 'Destroy', stock_list, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>
