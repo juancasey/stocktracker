@@ -10,10 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_12_211628) do
+ActiveRecord::Schema.define(version: 2018_11_13_002639) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "stock_lists", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_stock_lists_on_user_id"
+  end
+
+  create_table "stock_tickers", force: :cascade do |t|
+    t.string "symbol"
+    t.string "name"
+    t.bigint "stock_list_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["stock_list_id"], name: "index_stock_tickers_on_stock_list_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -40,4 +58,6 @@ ActiveRecord::Schema.define(version: 2018_11_12_211628) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "stock_lists", "users"
+  add_foreign_key "stock_tickers", "stock_lists"
 end

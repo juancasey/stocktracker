@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @stock_list.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @stock_list.description %>
+</p>
+
+<% if (@stock_list.stock_tickers.count > 0) %>
+  <table>
+    <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Name</th>      
+      </tr>
+    </thead>
+  
+    <tbody>
+      <% @stock_list.stock_tickers.each do |stock_ticker| %>
+        <tr>
+          <td><%= stock_ticker.symbol %></td>
+          <td><%= stock_ticker.name %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<%= link_to 'Edit', edit_stock_list_path(@stock_list) %> |
+<%= link_to 'Back', stock_lists_path %>
