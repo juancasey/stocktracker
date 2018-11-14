@@ -6,6 +6,8 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+# Seed a user for development purposes
+# Needs to be done more securely for production
 user = User.new(
     :email                 => "admin@localhost",
     :password              => "123456",

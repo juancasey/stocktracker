@@ -22,7 +22,7 @@
             </tr>
         <% else %>
             <tr>
-                <td><%= form.text_field :symbol, maxlength: 4 %></td>
+                <td><%= form.text_field :symbol, maxlength: 4, style: 'text-transform: uppercase;' %></td>
                 <td><%= form.text_field :name %></td>
                 <td><%= form.submit "Add" %></td>
             </tr>

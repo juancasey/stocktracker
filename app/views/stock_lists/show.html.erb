@@ -24,7 +24,13 @@
       </tr>
     </thead>
     <tbody>
-      <% stock_ticker.stock_values.order(created_at: :desc).limit(5).each do |stock_value| %>
+      <% stock_values = stock_ticker.stock_values.order(created_at: :desc).limit(5) %>
+      <% if (stock_values.count == 0) %>
+        <tr>
+          <td colspan="8">There are no stock values yet</td>
+        </tr>
+      <% end %>
+      <% stock_values.each do |stock_value| %>
         <% if(stock_value.stock_value_error_id.nil?) %>
           <tr>
             <td><%= stock_value.symbol %></td>          
