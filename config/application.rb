@@ -12,8 +12,8 @@ module Stocktracker
     config.load_defaults 5.2
 
     # Set our custom config values
-    config.x.stock_query.start_time_est = '23:20'
-    config.x.stock_query.run_every_minutes = 1;
+    config.x.stock_query.start_time_est = '16:05'
+    config.x.stock_query.run_every_minutes = 1440;
     config.x.stock_query.url = 'https://www.alphavantage.co/query'    
     config.x.stock_query.function = 'TIME_SERIES_DAILY'
     config.x.stock_query.interval = 'Daily'
