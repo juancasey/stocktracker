@@ -11,6 +11,11 @@
   </thead>
 
   <tbody>
+    <% if (@stock_lists.count == 0) %>
+      <tr>
+        <td colspan="6">There are no stock lists yet</td>
+      </tr>
+    <% end %>
     <% @stock_lists.each do |stock_list| %>
       <tr>
         <td><%= stock_list.name %></td>
