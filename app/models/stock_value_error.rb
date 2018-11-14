@@ -1,0 +1,2 @@
+class StockValueError < ApplicationRecord
+end

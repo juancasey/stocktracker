@@ -25,16 +25,24 @@
     </thead>
     <tbody>
       <% stock_ticker.stock_values.order(created_at: :desc).limit(5).each do |stock_value| %>
-        <tr>
-          <td><%= stock_value.symbol %></td>
-          <td><%= stock_value.timestamp.strftime("%F %H:%M") %></td>
-          <td><%= stock_value.open %></td>
-          <td><%= stock_value.high %></td>
-          <td><%= stock_value.low %></td>
-          <td><%= stock_value.close %></td>
-          <td><%= stock_value.volume %></td>
-          <td><%= stock_value.created_at %></td>
-        </tr>
+        <% if(stock_value.stock_value_error_id.nil?) %>
+          <tr>
+            <td><%= stock_value.symbol %></td>          
+            <td><%= stock_value.timestamp.try(:strftime, "%F %H:%M") %></td>
+            <td><%= stock_value.open %></td>
+            <td><%= stock_value.high %></td>
+            <td><%= stock_value.low %></td>
+            <td><%= stock_value.close %></td>
+            <td><%= stock_value.volume %></td>        
+            <td><%= stock_value.created_at.try(:strftime, "%F %H:%M") %></td>
+          </tr>
+        <% else %>
+          <tr class="error">
+            <td><%= stock_value.symbol %></td>
+            <td colspan="6"><%= stock_value.stock_value_error.try(:friendly_message) %></td>
+            <td><%= stock_value.created_at.try(:strftime, "%F %H:%M") %></td>
+          </tr>
+        <% end %>
       <% end %>
     </tbody>
   </table>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_13_030915) do
+ActiveRecord::Schema.define(version: 2018_11_14_004640) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,13 @@ ActiveRecord::Schema.define(version: 2018_11_13_030915) do
     t.index ["stock_list_id"], name: "index_stock_tickers_on_stock_list_id"
   end
 
+  create_table "stock_value_errors", force: :cascade do |t|
+    t.text "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "friendly_message"
+  end
+
   create_table "stock_values", force: :cascade do |t|
     t.string "symbol"
     t.datetime "timestamp"
@@ -43,6 +50,7 @@ ActiveRecord::Schema.define(version: 2018_11_13_030915) do
     t.integer "volume"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "stock_value_error_id"
   end
 
   create_table "users", force: :cascade do |t|
