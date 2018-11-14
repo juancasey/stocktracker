@@ -1,24 +1,16 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a sample project not intended for real use.
 
-Things you may want to cover:
+A user called admin@localhost with the password 123456 will be created when db:seed is run. This is only intended for development use.
 
-* Ruby version
+Settings for the automated service are found config/application.rb. For testing purposes you may wish to change run_every_minutes to a smaller number:
+    config.x.stock_query.run_every_minutes = 1440;
 
-* System dependencies
+ActiveJob is used recursively to mimic a task scheduler. On an environment with cron available using a gem such as whenever is probably preferable (I was developing under Windows which doesn't have cron).
 
-* Configuration
+Devise has been used for authentication. If the application grows adding a authorization plugin would probably be beneficial.
 
-* Database creation
+Devise invite is used (which requires email), for development purposes email is pointing to mailcatcher.
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Dates are displayed in US Eastern Time (EST) as this is the time zone of the stock data.
