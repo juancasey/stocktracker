@@ -1,6 +1,8 @@
 class StockListsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_stock_list, only: [:show, :edit, :update, :destroy]  
+  before_action :set_stock_list, only: [:show, :edit, :update, :destroy]
+  before_action only: [:show] do check_user_is_authorized(true) end
+  before_action only: [:edit, :update, :destroy] do check_user_is_authorized(false) end
 
   # GET /stock_lists
   def index
@@ -54,7 +56,7 @@ class StockListsController < ApplicationController
   def destroy
     @stock_list.destroy
     respond_to do |format|
-      format.html { redirect_to stock_lists_url, notice: 'Stock list was successfully destroyed.' }
+      format.html { redirect_to stock_lists_url, notice: 'Stock list was successfully deleted.' }
     end
   end
 
@@ -68,4 +70,16 @@ class StockListsController < ApplicationController
     def stock_list_params
       params.require(:stock_list).permit(:name, :description, :user_id)
     end
+
+    def user_is_authorized(allow_admin)
+      admin_permission = allow_admin && current_user.admin?;      
+      return (!current_user.nil? && (@stock_list.user_id == current_user.id || admin_permission))
+    end
+
+    def check_user_is_authorized(allow_admin)
+      return unless !user_is_authorized(allow_admin)
+      redirect_to root_path, alert: 'Permission denied'
+    end
+
+    helper_method :user_is_authorized
 end

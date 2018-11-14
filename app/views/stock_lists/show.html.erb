@@ -48,5 +48,7 @@
   </table>
 <% end %>
 
+<% if (user_is_authorized(false)) %>
 <%= link_to 'Edit', edit_stock_list_path(@stock_list) %> |
+<% end %>
 <%= link_to 'Back', stock_lists_path %>

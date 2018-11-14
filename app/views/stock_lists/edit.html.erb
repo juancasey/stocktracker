@@ -18,7 +18,7 @@
             <tr>
                 <td><%= stock_ticker.symbol %></td>
                 <td><%= stock_ticker.name %></td>
-                <td></td>
+                <td><%= link_to 'Delete', [@stock_list, stock_ticker], method: :delete %></td>
             </tr>
         <% else %>
             <tr>
