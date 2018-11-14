@@ -29,11 +29,11 @@
           <tr>
             <td><%= stock_value.symbol %></td>          
             <td><%= stock_value.timestamp.try(:strftime, "%F %H:%M") %></td>
-            <td><%= stock_value.open %></td>
-            <td><%= stock_value.high %></td>
-            <td><%= stock_value.low %></td>
-            <td><%= stock_value.close %></td>
-            <td><%= stock_value.volume %></td>        
+            <td><%= number_with_precision(stock_value.open, :precision => 4) %></td>
+            <td><%= number_with_precision(stock_value.high, :precision => 4) %></td>
+            <td><%= number_with_precision(stock_value.low, :precision => 4) %></td>
+            <td><%= number_with_precision(stock_value.close, :precision => 4) %></td>
+            <td><%= number_with_delimiter(stock_value.volume, :delimiter => ',') %></td>        
             <td><%= stock_value.created_at.try(:strftime, "%F %H:%M") %></td>
           </tr>
         <% else %>
