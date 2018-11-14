@@ -7,8 +7,10 @@ class StockListsController < ApplicationController
   # GET /stock_lists
   def index
     if (current_user.admin?)
-      @stock_lists = StockList.all.order(:user_id, :name)
+      # Get all stock lists (with those belonging to the current user first)
+      @stock_lists = StockList.includes(:user).all.order("CASE WHEN user_id = #{current_user.id} THEN 1 ELSE 2 END", 'users.email', :name)
     else
+      # Get only stock lists belonging to the current user
       @stock_lists = StockList.where(user: current_user).order(:name)
     end
   end

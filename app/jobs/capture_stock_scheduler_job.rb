@@ -8,11 +8,11 @@ class CaptureStockSchedulerJob < ApplicationJob
     CaptureStockValueJob.perform_later
   end
 
-  def self.schedule
+  def self.schedule        
     # Values for interval calculation (use yesterday to ensure the calculation is always positive)
-    start_time = (ActiveSupport::TimeZone["UTC"].parse("05:00") - 1.day)
-    run_every = 1.minutes.to_i
-    current_time = Time.current
+    start_time = (ActiveSupport::TimeZone["EST"].parse(Rails.configuration.x.stock_query.start_time_est) - 1.day)
+    run_every = Rails.configuration.x.stock_query.run_every_minutes.minutes.to_i
+    current_time = Time.current.in_time_zone('Eastern Time (US & Canada)')
 
     # Calculate how long until the next interval
     time_diff = (current_time - start_time)    

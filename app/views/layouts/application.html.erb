@@ -9,20 +9,20 @@
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
-  <body>    
+  <body>
     <ul class="menu">
-    <% if user_signed_in? %>
-      <li class="menuitem">
-      <%= link_to('Logout', destroy_user_session_path, method: :delete) %>
-      </li>
+    <% if user_signed_in? %>      
       <li class="menuitem">
       <%= link_to('Stock Lists', stock_lists_path) %>
-      </li>
+      </li>      
       <%  if (current_user.admin?) %>
         <li class="menuitem">
         <%= link_to('Manage Users', users_path) %>
         </li>
       <% end %>
+      <li class="menuitem">
+        <%= link_to("Logout (#{current_user.email})", destroy_user_session_path, method: :delete) %>
+      </li>
     <% else %>
       <li class="menuitem">
       <%= link_to('Login', new_user_session_path)  %>  

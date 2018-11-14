@@ -14,13 +14,13 @@
     <thead>
       <tr>
         <th>Symbol</th>
-        <th>Time Stamp (EST)</th>
+        <th>Date</th>
         <th>Open</th>
         <th>High</th>
         <th>Low</th>
         <th>Close</th>
         <th>Volume</th>
-        <th>Captured (UTC)</th>
+        <th>Captured (EST)</th>
       </tr>
     </thead>
     <tbody>
@@ -28,13 +28,13 @@
         <% if(stock_value.stock_value_error_id.nil?) %>
           <tr>
             <td><%= stock_value.symbol %></td>          
-            <td><%= stock_value.timestamp.try(:strftime, "%F %H:%M") %></td>
+            <td><%= stock_value.timestamp.try(:in_time_zone, 'Eastern Time (US & Canada)').try(:strftime, "%F") %></td>
             <td><%= number_with_precision(stock_value.open, :precision => 4) %></td>
             <td><%= number_with_precision(stock_value.high, :precision => 4) %></td>
             <td><%= number_with_precision(stock_value.low, :precision => 4) %></td>
             <td><%= number_with_precision(stock_value.close, :precision => 4) %></td>
             <td><%= number_with_delimiter(stock_value.volume, :delimiter => ',') %></td>        
-            <td><%= stock_value.created_at.try(:strftime, "%F %H:%M") %></td>
+            <td><%= stock_value.created_at.try(:in_time_zone, 'Eastern Time (US & Canada)').try(:strftime, "%F %H:%M") %></td>
           </tr>
         <% else %>
           <tr class="error">
