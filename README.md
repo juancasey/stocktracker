@@ -5,7 +5,7 @@ This is a sample project not intended for real use.
 A user called admin@localhost with the password 123456 will be created when db:seed is run. This is only intended for development use.
 
 Settings for the automated service are found config/application.rb. For testing purposes you may wish to change run_every_minutes to a smaller number:
-    config.x.stock_query.run_every_minutes = 1440;
+  config.x.stock_query.run_every_minutes = 1440;
 
 ActiveJob is used recursively to mimic a task scheduler. On an environment with cron available using a gem such as whenever is probably preferable (I was developing under Windows which doesn't have cron).
 
