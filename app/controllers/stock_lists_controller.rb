@@ -8,10 +8,15 @@ class StockListsController < ApplicationController
   def index
     if (current_user.admin?)
       # Get all stock lists (with those belonging to the current user first)
-      @stock_lists = StockList.includes(:user).all.order("CASE WHEN user_id = #{current_user.id} THEN 1 ELSE 2 END", 'users.email', :name)
+      @stock_lists = StockList.includes(:user).all.
+        order("CASE WHEN user_id = #{current_user.id} THEN 1 ELSE 2 END", 'users.email', :name)
     else
       # Get only stock lists belonging to the current user
-      @stock_lists = StockList.where(user: current_user).order(:name)
+      @stock_lists = StockList.includes(:user)
+        .joins(:user)
+        .joins("left join stock_list_users slu on slu.stock_list_id = stock_lists.id")
+        .where('stock_lists.user_id = ? OR slu.user_id = ?', current_user.id, current_user.id)
+        .order("CASE WHEN stock_lists.user_id = #{current_user.id} THEN 1 ELSE 2 END", 'users.email', :name)    
     end
   end
 

@@ -9,9 +9,10 @@ Rails.application.routes.draw do
   authenticate :user do
     resources :stock_lists do
       resources :stock_tickers
+      resources :stock_list_users
     end
   end
-  post 'create_user' => 'users#create', as: :create_user   
+  post 'create_user' => 'users#create', as: :create_user
 
   root to: 'stock_lists#index'
 end

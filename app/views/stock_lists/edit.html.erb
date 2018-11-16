@@ -32,5 +32,34 @@
   </table>
 <% end %>
 
+<%= form_with(model: [ @stock_list, @stock_list.stock_list_users.build ], local: true) do |form| %>
+  <h2>Sharing</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th></th>     
+      </tr>
+    </thead>
+  
+    <tbody>
+      <% @stock_list.stock_list_users.each do |stock_list_user| %>        
+        <% user = stock_list_user.user %>
+        <% if (!stock_list_user.user_id.nil?) %>
+          <tr>
+              <td><%= user.email %></td>
+              <td><%= link_to 'Delete', [@stock_list, stock_list_user], method: :delete %></td>
+          </tr>
+        <% else %>
+          <tr>
+            <td><%= form.text_field :email %></td>
+            <td><%= form.submit "Share" %></td>
+          </tr>
+        <% end %>
+      <% end %>        
+    </tbody>
+  </table>
+<% end %>
+
 <%= link_to 'Show', @stock_list %> |
 <%= link_to 'Back', stock_lists_path %>
