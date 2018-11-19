@@ -16,6 +16,9 @@ class CaptureStockValueJob < ApplicationJob
     # Just one friendly error for now, could customize the error based on what happened later
     friendly_error = "The system was unable to retrieve the stock value at this time";
 
+    # Keep a list of retrieved stock values so we can send alerts
+    stock_values = Array.new
+
     # For each symbol make a call to the API and retrieve the latest stock data
     symbols.each do |symbol|
       begin        
@@ -26,8 +29,9 @@ class CaptureStockValueJob < ApplicationJob
           if (result['Error Message'].nil?)
             timestamp = ActiveSupport::TimeZone["EST"].parse(result["Time Series (#{interval})"].first[0])
             v = result["Time Series (#{interval})"].first[1]
-            stockvalue = StockValue.new({symbol: symbol, timestamp: timestamp, open: v['1. open'], high: v['2. high'], low: v['3. low'], close: v['4. close'], volume: v['5. volume'] })
+            stockvalue = StockValue.new({symbol: symbol, timestamp: timestamp, open: v['1. open'], high: v['2. high'], low: v['3. low'], close: v['4. close'], volume: v['5. volume'] })            
             saved = stockvalue.save
+            stock_values.push(stockvalue)
           else
             stockvalue = stock_error(symbol,result['Error Message'],friendly_error)
           end
@@ -42,6 +46,8 @@ class CaptureStockValueJob < ApplicationJob
         saved = stockvalue.save
       end
     end
+
+    StockValueThresholdJob.perform_later(stock_values)
   end
 
   # Create a new stock value with the error that occurred

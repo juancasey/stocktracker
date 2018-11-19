@@ -26,6 +26,6 @@ class StockTickersController < ApplicationController
         end
 
         def stock_ticker_params
-            params.require(:stock_ticker).permit(:symbol, :name)
+            params.require(:stock_ticker).permit(:symbol, :name, :min_threshold, :max_threshold)
         end
 end

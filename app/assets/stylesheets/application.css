@@ -64,3 +64,8 @@ li.menuitem a {
 li.menuitem a:hover {
     background-color: #111111;
 }
+
+/*** Input Styles ***/
+input[type=text].medium {
+    width: 96px;
+}

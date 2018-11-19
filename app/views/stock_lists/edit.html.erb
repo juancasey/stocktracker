@@ -8,7 +8,9 @@
       <tr>
         <th>Symbol</th>
         <th>Name</th>
-        <th></th>     
+        <th>Threshold (Min)</th>
+        <th>Threshold (Max)</th>
+        <th></th>
       </tr>
     </thead>
   
@@ -18,12 +20,16 @@
             <tr>
                 <td><%= stock_ticker.symbol %></td>
                 <td><%= stock_ticker.name %></td>
+                <td><%= stock_ticker.min_threshold %></td>
+                <td><%= stock_ticker.max_threshold %></td>
                 <td><%= link_to 'Delete', [@stock_list, stock_ticker], method: :delete %></td>
             </tr>
         <% else %>
             <tr>
                 <td><%= form.text_field :symbol, maxlength: 4, style: 'text-transform: uppercase;' %></td>
                 <td><%= form.text_field :name %></td>
+                <td><%= form.text_field :min_threshold, class: "medium" %></td>
+                <td><%= form.text_field :max_threshold, class: "medium" %></td>
                 <td><%= form.submit "Add" %></td>
             </tr>
         <% end %>

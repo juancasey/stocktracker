@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Stock value alert for <%= @ticker.symbol %> (<%= @ticker.name %>)</h1>
+    <p>
+      <% over = @value.close > @ticker.max_threshold %>
+      Ticker <%= @ticker.symbol %> closed at <b><%= @value.close %></b> which is <%= over ? "above" : "below" %> your configured <%= over ? "maximum" : "minimum" %> value of <b><%= over ? @ticker.max_threshold : @ticker.min_threshold %></b>
+    </p>
+  </body>
+</html>
