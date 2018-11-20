@@ -3,7 +3,10 @@ class CaptureStockValueJob < ApplicationJob
 
   @@error_hash = Hash.new(0)
 
-  def perform(*args)    
+  def perform(*args)
+    # Don't start if we are cancelled
+    return if is_cancelled
+
     # Get a distinct list of all symbols tracked by users
     symbols = StockTicker.distinct.pluck(:symbol)
 
@@ -21,33 +24,52 @@ class CaptureStockValueJob < ApplicationJob
 
     # For each symbol make a call to the API and retrieve the latest stock data
     symbols.each do |symbol|
-      begin        
+      begin
+        # We can bail out part way through the retrieval process
+        return if is_cancelled
+
         response = RestClient.get url, {params: {function: function, symbol: symbol, interval: interval, apikey: apikey}}
-        if ((200..207).include?(response.code))          
+        if ((200..207).include?(response.code))
           result = JSON.parse response.body
           # If the service provided data for the current symbol make a StockValue with the details
           if (result['Error Message'].nil?)
             timestamp = ActiveSupport::TimeZone["EST"].parse(result["Time Series (#{interval})"].first[0])
             v = result["Time Series (#{interval})"].first[1]
-            stockvalue = StockValue.new({symbol: symbol, timestamp: timestamp, open: v['1. open'], high: v['2. high'], low: v['3. low'], close: v['4. close'], volume: v['5. volume'] })            
-            saved = stockvalue.save
-            stock_values.push(stockvalue)
+            stock_values.push StockValue.new({symbol: symbol, timestamp: timestamp, open: v['1. open'], high: v['2. high'], low: v['3. low'], close: v['4. close'], volume: v['5. volume'] })            
           else
-            stockvalue = stock_error(symbol,result['Error Message'],friendly_error)
+            stock_values.push stock_error(symbol,result['Error Message'],friendly_error)
           end
         else
-          stockvalue = stock_error(symbol,"Unexpected HTTP response #{response.code}",friendly_error)
+          stock_values.push stock_error(symbol,"Unexpected HTTP response #{response.code}",friendly_error)
         end        
       rescue => ex
-        stockvalue = stock_error(symbol,ex.message,friendly_error)
-      end
-      # Save if we have successfully retrieved the values or have an error to record
-      if (!stockvalue.nil?)
-        saved = stockvalue.save
+        stock_values.push stock_error(symbol,ex.message,friendly_error)
+      end      
+    end
+    
+    # Last chance to bail out
+    return if is_cancelled
+
+    # Save all retrieved stock values / errors
+    save_stock_values(stock_values)
+
+    # Send threshold notifications
+    StockValueThresholdJob.perform_later(stock_values)
+  end
+
+  def is_cancelled
+    false
+  end
+
+  def save_stock_values(stock_values)    
+    # Consider saving an atomic operation that cannot be cancelled
+    StockValue.transaction do # Save in one transaction to reduce DB time
+      stock_values.each do |stock_value|
+        if (!stock_value.nil?)
+          stock_value.save
+        end
       end
     end
-
-    StockValueThresholdJob.perform_later(stock_values)
   end
 
   # Create a new stock value with the error that occurred
