@@ -46,7 +46,7 @@
           <tr class="error">
             <td><%= stock_value.symbol %></td>
             <td colspan="6"><%= stock_value.stock_value_error.try(:friendly_message) %></td>
-            <td><%= stock_value.created_at.try(:strftime, "%F %H:%M") %></td>
+            <td><%= stock_value.created_at.try(:in_time_zone, 'Eastern Time (US & Canada)').try(:strftime, "%F %H:%M") %></td>
           </tr>
         <% end %>
       <% end %>
