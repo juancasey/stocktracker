@@ -19,6 +19,9 @@
         <li class="menuitem">
         <%= link_to('Manage Users', users_path) %>
         </li>
+        <li class="menuitem">
+        <%= link_to('Manage Stock Service', stock_values_path) %>
+        </li>
       <% end %>
       <li class="menuitem">
         <%= link_to("Logout (#{current_user.email})", destroy_user_session_path, method: :delete) %>

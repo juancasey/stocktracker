@@ -1,5 +1,8 @@
 class StockValuesController < ApplicationController
-    def index        
+    before_action :authenticate_user!
+    before_action :authorize_admin
+
+    def index
     end
 
     def run
