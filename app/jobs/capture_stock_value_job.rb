@@ -23,9 +23,9 @@ class CaptureStockValueJob < ApplicationJob
     end
   end
 
-  def perform(*args)
+  def perform(cancellable = true)
     # Don't start if we are cancelled
-    return if is_cancelled
+    return if (cancellable && is_cancelled)
 
     CaptureStockValueJob::Status.status = :running
 
@@ -48,7 +48,7 @@ class CaptureStockValueJob < ApplicationJob
     symbols.each do |symbol|
       begin
         # We can bail out part way through the retrieval process
-        return if is_cancelled
+        return if (cancellable && is_cancelled)
 
         response = RestClient.get url, {params: {function: function, symbol: symbol, interval: interval, apikey: apikey}}
         if ((200..207).include?(response.code))
@@ -70,7 +70,7 @@ class CaptureStockValueJob < ApplicationJob
     end
     
     # Last chance to bail out
-    return if is_cancelled
+    return if (cancellable && is_cancelled)
 
     # Save all retrieved stock values / errors
     save_stock_values(stock_values)
