@@ -3,9 +3,31 @@ class CaptureStockValueJob < ApplicationJob
 
   @@error_hash = Hash.new(0)
 
+  class Status
+    # Use getters/setters because we should probably move this to a cache or DB
+    @@status = :idle
+    @@paused = false
+
+    def self.status
+      @@status
+    end
+    def self.status=(val)
+      @@status = val
+    end
+
+    def self.paused
+      @@paused
+    end
+    def self.paused=(val)
+      @@paused = val
+    end
+  end
+
   def perform(*args)
     # Don't start if we are cancelled
     return if is_cancelled
+
+    CaptureStockValueJob::Status.status = :running
 
     # Get a distinct list of all symbols tracked by users
     symbols = StockTicker.distinct.pluck(:symbol)
@@ -53,15 +75,22 @@ class CaptureStockValueJob < ApplicationJob
     # Save all retrieved stock values / errors
     save_stock_values(stock_values)
 
+    CaptureStockValueJob::Status.status = :idle
+
     # Send threshold notifications
     StockValueThresholdJob.perform_later(stock_values)
   end
 
   def is_cancelled
-    false
+    cancelled = CaptureStockValueJob::Status.paused
+    if (cancelled)
+      CaptureStockValueJob::Status.status = :aborted
+    end
+    return cancelled
   end
 
   def save_stock_values(stock_values)    
+    CaptureStockValueJob::Status.status = :saving
     # Consider saving an atomic operation that cannot be cancelled
     StockValue.transaction do # Save in one transaction to reduce DB time
       stock_values.each do |stock_value|

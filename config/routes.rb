@@ -16,6 +16,8 @@ Rails.application.routes.draw do
 
   post 'create_user' => 'users#create', as: :create_user
   post 'run_job' => 'stock_values#run', as: :run_job
+  post 'pause_job' => 'stock_values#pause', as: :pause_job
+  post 'resume_job' => 'stock_values#resume', as: :resume_job
 
   root to: 'stock_lists#index'
 end
