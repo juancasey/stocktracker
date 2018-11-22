@@ -1,9 +1,10 @@
 class StockValueThresholdJob < ApplicationJob
   queue_as :default
 
-  def perform(stock_values)
-    return if stock_values.nil?
-    stock_values.each do |value|
+  def perform(stock_capture_id)
+    stock_capture = StockCapture.find(stock_capture_id);
+    return if stock_capture.nil?
+    stock_capture.stock_values.each do |value|
       next if !value.stock_value_error_id.nil?
       StockTicker.where(symbol: value.symbol)
       .where("min_threshold >= :current_value OR max_threshold <= :current_value", {current_value: value.close })

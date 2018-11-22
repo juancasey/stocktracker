@@ -42,30 +42,33 @@ class CaptureStockValueJob < ApplicationJob
     friendly_error = "The system was unable to retrieve the stock value at this time";
 
     # Keep a list of retrieved stock values so we can send alerts
+    stock_capture = StockCapture.new({ run_at: Time.now.utc, success_count: 0, error_count: 0 })
     stock_values = Array.new
 
     # For each symbol make a call to the API and retrieve the latest stock data
     symbols.each do |symbol|
       begin
         # We can bail out part way through the retrieval process
-        return if (cancellable && is_cancelled)
+        return if (cancellable && is_cancelled)        
 
         response = RestClient.get url, {params: {function: function, symbol: symbol, interval: interval, apikey: apikey}}
         if ((200..207).include?(response.code))
           result = JSON.parse response.body
           # If the service provided data for the current symbol make a StockValue with the details
-          if (result['Error Message'].nil?)
+          if (result['Error Message'].nil? && result['Note'].nil?)
             timestamp = ActiveSupport::TimeZone["EST"].parse(result["Time Series (#{interval})"].first[0])
             v = result["Time Series (#{interval})"].first[1]
-            stock_values.push StockValue.new({symbol: symbol, timestamp: timestamp, open: v['1. open'], high: v['2. high'], low: v['3. low'], close: v['4. close'], volume: v['5. volume'] })            
+            stock_capture.stock_values.build({symbol: symbol, timestamp: timestamp, open: v['1. open'], high: v['2. high'], low: v['3. low'], close: v['4. close'], volume: v['5. volume'] })            
+            stock_capture.success_count += 1
           else
-            stock_values.push stock_error(symbol,result['Error Message'],friendly_error)
+            message = result['Error Message'].nil? ? result['Note'] : result['Error Message'];
+            stock_error(stock_capture, symbol, message, friendly_error)
           end
         else
-          stock_values.push stock_error(symbol,"Unexpected HTTP response #{response.code}",friendly_error)
+          stock_error(stock_capture, symbol,"Unexpected HTTP response #{response.code}",friendly_error)
         end        
       rescue => ex
-        stock_values.push stock_error(symbol,ex.message,friendly_error)
+        stock_error(stock_capture, symbol,ex.message,friendly_error)
       end      
     end
     
@@ -73,12 +76,12 @@ class CaptureStockValueJob < ApplicationJob
     return if (cancellable && is_cancelled)
 
     # Save all retrieved stock values / errors
-    save_stock_values(stock_values)
-
+    CaptureStockValueJob::Status.status = :saving
+    stock_capture.save
     CaptureStockValueJob::Status.status = :idle
 
     # Send threshold notifications
-    StockValueThresholdJob.perform_later(stock_values)
+    StockValueThresholdJob.perform_later(stock_capture.id)
   end
 
   def is_cancelled
@@ -89,22 +92,11 @@ class CaptureStockValueJob < ApplicationJob
     return cancelled
   end
 
-  def save_stock_values(stock_values)    
-    CaptureStockValueJob::Status.status = :saving
-    # Consider saving an atomic operation that cannot be cancelled
-    StockValue.transaction do # Save in one transaction to reduce DB time
-      stock_values.each do |stock_value|
-        if (!stock_value.nil?)
-          stock_value.save
-        end
-      end
-    end
-  end
-
   # Create a new stock value with the error that occurred
-  def stock_error(symbol, message, friendly_message)
+  def stock_error(stock_capture, symbol, message, friendly_message)
     error_id = get_error_code(message, friendly_message)
-    StockValue.new({symbol: symbol, stock_value_error_id: error_id})
+    stock_capture.stock_values.build({symbol: symbol, stock_value_error_id: error_id})
+    stock_capture.error_count += 1
   end
 
   # Get the error code for a message, add it to the database if it doesn't already exist

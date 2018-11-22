@@ -1,0 +1,49 @@
+<h1>Stock Capture Errors</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Run At (EST)</th>
+      <th>Success Count</th>
+      <th>Error Count</th>      
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% if (@stock_captures.count == 0) %>
+      <tr>
+        <td colspan="4">There are no stock captures with errors</td>
+      </tr>
+    <% end %>
+    <% @stock_captures.where('error_count > 0').each do |stock_capture| %>
+      <tr>        
+        <td><%= stock_capture.run_at.try(:in_time_zone, 'Eastern Time (US & Canada)').try(:strftime, "%F %H:%M") %></td>        
+        <td><%= stock_capture.success_count %></td>
+        <td><%= stock_capture.error_count %></td>
+        <td>
+            <table style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Error</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <% stock_capture.stock_values.where('stock_value_error_id is not null').each do |stock_value| %>
+                        <tr class="error">
+                            <td style="width: 48px"><%= stock_value.symbol %></td>
+                            <% if (stock_value.stock_value_error.nil?) %>
+                                <td></td>
+                            <% else %>
+                                <td style="max-width: 800px"><%= stock_value.stock_value_error.message %></td>
+                            <% end %>
+                        </tr>
+                    <% end %>
+                </tbody>
+            </table>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
