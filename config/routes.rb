@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
     resources :users, except: :create
     match '/users',   to: 'users#index',   via: 'get'
+    match '/stock_lists/:id/chart',   to: 'stock_lists#chart',   via: 'get'
     match '/stock_values',   to: 'stock_values#index',   via: 'get'
     post 'create_user' => 'users#create', as: :create_user
     post 'run_job' => 'stock_values#run', as: :run_job

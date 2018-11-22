@@ -1,6 +1,6 @@
 class StockListsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_stock_list, only: [:show, :edit, :update, :destroy]
+  before_action :set_stock_list, only: [:show, :chart, :edit, :update, :destroy]
   before_action only: [:show] do check_user_is_authorized(true) end
   before_action only: [:edit, :update, :destroy] do check_user_is_authorized(false) end
 
@@ -23,6 +23,11 @@ class StockListsController < ApplicationController
   # GET /stock_lists/1
   def show    
     
+  end
+
+  def chart
+    values = StockList.chart(@stock_list.id)
+    @chart_data = JSON.generate(values)
   end
 
   # GET /stock_lists/new
