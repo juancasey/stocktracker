@@ -109,7 +109,11 @@ class StockListsController < ApplicationController
 
     def user_is_authorized(allow_admin)
       admin_permission = allow_admin && current_user.admin?;      
-      return (!current_user.nil? && (@stock_list.user_id == current_user.id || admin_permission))
+      return (!current_user.nil? && (
+        @stock_list.user_id == current_user.id\
+        || admin_permission\
+        || @stock_list.stock_list_users.where(user_id: current_user.id).any?
+      ))
     end
 
     def check_user_is_authorized(allow_admin)
