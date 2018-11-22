@@ -14,9 +14,9 @@ class StockListsController < ApplicationController
       # Get only stock lists belonging to the current user
       @stock_lists = StockList.includes(:user)
         .joins(:user)
-        .joins("left join stock_list_users slu on slu.stock_list_id = stock_lists.id")
-        .where('stock_lists.user_id = ? OR slu.user_id = ?', current_user.id, current_user.id)
-        .order("CASE WHEN stock_lists.user_id = #{current_user.id} THEN 1 ELSE 2 END", 'users.email', :name)    
+        .joins(:stock_list_users)
+        .where({ stock_list_users: { user_id: current_user.id }})
+        .order("CASE WHEN stock_lists.user_id = #{current_user.id} THEN 1 ELSE 2 END", 'users.email', :name)      
     end
   end
 
@@ -66,6 +66,7 @@ class StockListsController < ApplicationController
   def create
     @stock_list = StockList.new(stock_list_params)
     @stock_list.user_id = current_user.id
+    @stock_list.stock_list_users.build({user_id: current_user.id})
 
     respond_to do |format|
       if @stock_list.save
