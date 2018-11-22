@@ -56,8 +56,10 @@ class CaptureStockValueJob < ApplicationJob
           result = JSON.parse response.body
           # If the service provided data for the current symbol make a StockValue with the details
           if (result['Error Message'].nil? && result['Note'].nil?)
-            timestamp = ActiveSupport::TimeZone["EST"].parse(result["Time Series (#{interval})"].first[0])
-            v = result["Time Series (#{interval})"].first[1]
+            timeseries = result["Time Series (#{interval})"]
+            key = timeseries.keys[0]            
+            timestamp = ActiveSupport::TimeZone["EST"].parse(key)
+            v = timeseries[key]
             stock_capture.stock_values.build({symbol: symbol, timestamp: timestamp, open: v['1. open'], high: v['2. high'], low: v['3. low'], close: v['4. close'], volume: v['5. volume'] })            
             stock_capture.success_count += 1
           else
