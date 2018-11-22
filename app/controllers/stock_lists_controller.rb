@@ -1,7 +1,7 @@
 class StockListsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_stock_list, only: [:show, :chart, :edit, :update, :destroy]
-  before_action only: [:show] do check_user_is_authorized(true) end
+  before_action only: [:show, :chart] do check_user_is_authorized(true) end
   before_action only: [:edit, :update, :destroy] do check_user_is_authorized(false) end
 
   # GET /stock_lists
@@ -26,8 +26,31 @@ class StockListsController < ApplicationController
   end
 
   def chart
-    values = StockList.chart(@stock_list.id)
-    @chart_data = JSON.generate(values)
+    # Get the date range for our last ten captures
+    captures = StockCapture.all.order(run_at: :desc).limit(5)
+    run_at_from = captures.pluck(:run_at).last
+    run_at_to = captures.pluck(:run_at).first
+
+    # Retrieve the required data
+    data = @stock_list.stock_tickers.joins(:stock_values).joins(:stock_values => :stock_capture)      
+      .where({ stock_captures: { run_at: run_at_from..run_at_to }})
+      .select(:run_at, :symbol, :close)
+
+    # Pivot the data to match the graphing format
+    pivoted = PivotTable::Grid.new do |g|
+      g.source_data  = data
+      g.column_name  = :symbol
+      g.row_name     = :run_at
+      g.value_name   = :close
+    end.build
+
+    # Map the pivoted data into a simple array we can send to the client
+    array = pivoted.rows.map do |row|
+      row.data.map { |r| r.close.nil? ? nil : r.close.to_f }
+      .unshift(row.header.try(:in_time_zone, 'Eastern Time (US & Canada)').try(:strftime, "%F %H:%M"))
+    end.unshift(['Run At'] + pivoted.column_headers)
+
+    @chart_data = JSON.generate(array)
   end
 
   # GET /stock_lists/new

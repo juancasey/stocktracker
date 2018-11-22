@@ -62,3 +62,5 @@ gem 'devise_invitable'
 
 # Helper to consume web services
 gem 'rest-client'
+
+gem 'pivot_table'

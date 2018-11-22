@@ -1,4 +1,3 @@
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
     google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(drawChart);
@@ -16,4 +15,9 @@
     chart.draw(data, options);
     }
 </script>
+
 <div id="time_chart" style="width: 900px; height: 500px"></div>
+
+<br />
+
+<%= link_to 'Back', stock_lists_path %>
